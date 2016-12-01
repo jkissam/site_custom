@@ -1,0 +1,119 @@
+<?php
+	
+/**
+ * Implements hook_menu().
+ */
+function site_custom_menu() {
+  $items = array();
+
+  $items['admin/config/system/site-information/customizations'] = array(
+    'title' => 'Site Customizations',
+	'description' => 'Configure the custom module for site_name',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_site_custom_config'),
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  if (variable_get('site_custom_styles_enabled', 0)) {
+	  $items['styles'] = array(
+		  'title' => 'Style Development Page',
+		  'description' => 'Page that displays',
+		  'page callback' => '_site_custom_styles_page',
+		  'access arguments' => array('access content'),
+		  'type' => MENU_NORMAL_ITEM,
+	  )
+  }
+
+  return $items;
+
+}
+
+/**
+ * Callback function for configuration form
+ */
+function _site_custom_config($form, &$form_state){
+	
+	$form = array();
+	
+	$form['site_custom_styles_enabled'] = array(
+		'#type' => 'checkbox',
+		'#title' => t('Enable /styles page'),
+		'#default_value' => variable_get('site_custom_styles_enabled', 0),
+	);
+	
+	$form['site_custom_language_switcher_text'] = array(
+		'#type' => 'text',
+		'#title' => t('Text for language switcher menu item'),
+		'#default_value' => variable_get('site_custom_language_switcher_text', ''),
+		'#description' => '<strong>Warning:</strong> <em>Any</em> menu item whose text matches this text will be turned into a language switcher, if and only if exactly two languages are enabled on the site',
+	);
+	
+	return system_settings_form($form);
+}
+
+/**
+ * Callback function for styles page
+ */
+function _site_custom_styles_page(){
+	
+	$page = <<<EOHTML
+<h1>Header 1</h1>	
+<h2>Header 2</h2>
+<h3>Header 3</h3>
+<h4>Header 4</h4>
+<h5>Header 5</h5>
+<h6>Header 6</h6>
+<p>Paragraph</p>
+<blockquote>Blockquote</blockquote>
+EOHTML;
+	
+	return $page;
+}
+	
+/**
+ * Based on Language Switcher Menu Item from LiquidCMS:
+ * http://www.liquidcms.ca/post/how-language-switcher-menu-item
+ */
+
+function site_custom_menu_link_alter(&$item) {
+	$target_text = variable_get('site_custom_language_switcher_text', '');
+	if ($target_text && ($item['link_title'] == $target_text) ) {
+		$item['options']['alter'] = true;
+	}
+}          
+
+function site_custom_translated_menu_link_alter(&$item, $map) {
+	$target_text = variable_get('site_custom_language_switcher_text', '');
+	if ($item['link_title'] == $target_text) {
+		global $language;
+		$languages = language_list('enabled');
+
+		// if there are not exactly two languages enabled, ignore
+		if (count($languages) != 2) { return; }
+		
+		$path = drupal_is_front_page() ? '<front>' : $_GET['q'];
+		$links = language_negotiation_get_switch_links('language', $path);
+  
+		// use $language->language and $languages to figure out the two-letter language code of the other language, and assign it to $pick
+		$languages_copy = $languages[1];
+		unset($languages_copy[$language->language]);
+		$codes = array_keys($languages_copy);
+		$pick = $codes[0];
+
+		$item['href'] = $links->links[$pick]['href']; 
+    
+		// add on rest of GETs to path
+		$gets = $_GET;
+		unset($gets['q']);  // remove q
+		if (count($gets)) $item['localized_options']['query'] = $gets;
+    
+		$item['localized_options']['langcode'] = $pick;  
+		$item['localized_options']['attributes']['class'][] = 'language-link';     
+		$item['localized_options']['attributes']['lang'] = $pick; 
+		$item['localized_options']['attributes']['xml:lang'] = $pick; 
+		$item['localized_options']['language']->prefix = $languages[1][$pick]->prefix;    
+		$item['localized_options']['language']->language = $pick;
+	}
+}
+
