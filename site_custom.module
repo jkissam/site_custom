@@ -22,7 +22,7 @@ function site_custom_menu() {
 		  'page callback' => '_site_custom_styles_page',
 		  'access arguments' => array('access content'),
 		  'type' => MENU_NORMAL_ITEM,
-	  )
+	  );
   }
 
   return $items;
@@ -43,7 +43,7 @@ function _site_custom_config($form, &$form_state){
 	);
 	
 	$form['site_custom_language_switcher_text'] = array(
-		'#type' => 'text',
+		'#type' => 'textfield',
 		'#title' => t('Text for language switcher menu item'),
 		'#default_value' => variable_get('site_custom_language_switcher_text', ''),
 		'#description' => '<strong>Warning:</strong> <em>Any</em> menu item whose text matches this text will be turned into a language switcher, if and only if exactly two languages are enabled on the site',
@@ -64,11 +64,204 @@ function _site_custom_styles_page(){
 <h4>Header 4</h4>
 <h5>Header 5</h5>
 <h6>Header 6</h6>
-<p>Paragraph</p>
-<blockquote>Blockquote</blockquote>
+
+<p><strong>Strong (bold) text</strong><br />
+<em>Emphasized (italic) text</em><br />
+<strong><em>Strong Emphasized text</em></strong></p>
+
+<p><a href="#" onclick="return false;">Regular link</a>
+<a href="#" onclick="return false;" class="button">Button link</a>
+<a href="#" onclick="return false;" class="button button-cta">Call to action button</a></p>
+
+<p>Full Paragraph: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis suscipit, mauris nec varius malesuada, risus odio condimentum libero, vitae convallis tellus nisl eget libero. Fusce lacinia lectus vitae ligula tincidunt, quis lacinia nunc mollis. Sed et pretium arcu. Ut sit amet ultrices diam, id venenatis elit. Quisque scelerisque sem mauris, quis pulvinar sapien vulputate nec. Cras rhoncus viverra semper. In at ante lobortis, accumsan tortor id, aliquet quam. In blandit, urna id eleifend viverra, ex nisi hendrerit arcu, eu molestie dolor urna at libero. Nam est elit, sagittis at ipsum et, pellentesque dignissim sem. Nunc imperdiet nisi at lacus commodo, nec malesuada nisi posuere. Ut iaculis leo ut velit finibus blandit. Sed malesuada, est id rutrum fringilla, sem nisi sodales turpis, ut feugiat mauris tortor at velit.</p>
+
+<blockquote>Blockquote: Integer et tempor sem. Donec iaculis nulla erat, ac blandit lacus fermentum sed. Fusce eget arcu sapien. In egestas porta orci, ac bibendum ante cursus ut. Donec auctor felis at pharetra dictum. Integer luctus, sem in hendrerit hendrerit, massa nisi laoreet orci, in pretium leo metus nec dui. Maecenas volutpat turpis leo, at tristique ligula vestibulum in.</blockquote>
 EOHTML;
+
+	$form = drupal_get_form('_site_custom_demo_form');
+	$page .= drupal_render($form);
 	
 	return $page;
+}
+
+/**
+ * Callback function for demo form
+ */
+function _site_custom_demo_form() {
+	$form = array();
+	
+	$form['checkbox'] = array(
+		'#type' => 'checkbox',
+		'#title' => t('This is a single checkbox'),
+	);
+	
+	$form['checkboxes'] = array(
+		'#type' => 'checkboxes',
+		'#title' => t('Multiple-option checkboxes'),
+		'#options' => drupal_map_assoc(array(t('One Option'),t('Another Option'),t('A Third Option'))),
+	);
+	
+	$form['date'] = array(
+		'#type' => 'date',
+		'#title' => t('This is a date field (and it is required)'),
+		'#required' => true,
+	);
+	
+	$form['fieldset'] = array(
+		'#type' => 'fieldset',
+		'#title' => t('This is a regular fieldset'),
+	);
+	$form['fieldset']['text1'] = array(
+		'#type' => 'textfield',
+		'#title' => t('It contains a couple of textfields'),
+	);
+	$form['fieldset']['text2'] = array(
+		'#type' => 'textfield',
+		'#title' => t('The second one is required'),
+		'#required' => true,
+	);
+	
+	$form['fieldset_collapsible'] = array(
+		'#type' => 'fieldset',
+		'#title' => t('This is a collapsible fieldset'),
+		'#collapsible' => true,
+	);
+	$form['fieldset_collapsible']['text3'] = array(
+		'#type' => 'textfield',
+		'#title' => t('It contains a couple of textfields'),
+	);
+	$form['fieldset_collapsible']['text4'] = array(
+		'#type' => 'textfield',
+		'#title' => t('The second one is required'),
+		'#required' => true,
+	);
+	
+	$form['file'] = array(
+		'#type' => 'file',
+		'#title' => t('This is a file upload'),
+	);
+	
+	$form['machine_name'] = array(
+		'#type' => 'machine_name',
+		'#title' => t('This field asks for a machine name'),
+	);
+	
+	$form['managed_file'] = array(
+		'#type' => 'managed_file',
+		'#title' => t('This is a managed file upload'),
+	);
+	
+	$form['password'] = array(
+		'#type' => 'password',
+		'#title' => t('This is a password field'),
+	);
+	
+	$form['password_confirm'] = array(
+		'#type' => 'password_confirm',
+		'#title' => t('This is a pair of fields for entering a new password'),
+	);
+	
+	$form['radios'] = array(
+		'#type' => 'radios',
+		'#title' => t('Radio selectors'),
+		'#options' => drupal_map_assoc(array(t('One Option'),t('Another Option'),t('A Third Option'))),
+	);
+	
+	$form['select'] = array(
+		'#type' => 'select',
+		'#title' => t('A listbox selector'),
+		'#options' => drupal_map_assoc(array(t('One Option'),t('Another Option'),t('A Third Option'))),
+	);
+	
+	$form['select_multiple'] = array(
+		'#type' => 'select',
+		'#title' => t('A listbox selector that allows multiple selections'),
+		'#multiple' => true,
+		'#options' => drupal_map_assoc(array(t('One Option'),t('Another Option'),t('A Third Option'))),
+	);
+	
+	$tableselectheader = array(
+		'title' => array('data' => t('Title'), 'field' => 'title', 'sort' => 'asc'),
+		'type' => t('Type'),
+		'status' => t('Status'),
+	);
+	$tableselectoptions = array(
+		0 => array(
+			'title' => array(
+				'data' => array(
+					'#type' => 'link',
+					'#title' => 'Article Number One',
+					'#href' => 'node',	
+				),
+			),
+			'type' => 'Article',
+			'status' => 'published',
+		),
+		1 => array(
+			'title' => array(
+				'data' => array(
+					'#type' => 'link',
+					'#title' => 'Article Number Two',
+					'#href' => 'node',	
+				),
+			),
+			'type' => 'Article',
+			'status' => 'not published',
+		),
+		2 => array(
+			'title' => array(
+				'data' => array(
+					'#type' => 'link',
+					'#title' => 'Page Number One',
+					'#href' => 'node',	
+				),
+			),
+			'type' => 'Page',
+			'status' => 'published',
+		),
+	);
+	
+	$form['tableselect'] = array(
+		'#type' => 'tableselect',
+		'#header' => $tableselectheader,
+		'#options' => $tableselectoptions,
+		'#empty' => t('No content'),
+	);
+	
+	$form['text_format'] = array(
+		'#type' => 'text_format',
+		'#title' => t('Textarea with text format options'),
+	);
+	
+	$form['textarea'] = array(
+		'#type' => 'textarea',
+		'#title' => t('Textarea'),
+	);
+	
+	$form['textfield'] = array(
+		'#type' => 'textfield',
+		'#title' => t('A good ol\' textfield'),
+	);
+	
+	$form['weight'] = array(
+		'#type' => 'weight',
+		'#title' => t('A weight selector'),
+	);
+	
+	$form['actions'] = array('#type' => 'actions');
+	$form['actions']['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t('Save'),
+	);
+	$form['actions']['delete'] = array(
+		'#type' => 'button',
+		'#value' => t('Delete'),
+	);
+	$form['actions']['cancel'] = array(
+		'#markup' => l(t('Cancel'), 'foo/bar'),
+	);
+	
+	return $form;
 }
 	
 /**
@@ -88,9 +281,11 @@ function site_custom_translated_menu_link_alter(&$item, $map) {
 	if ($item['link_title'] == $target_text) {
 		global $language;
 		$languages = language_list('enabled');
+		
+		// drupal_set_message('<pre>'.print_r($languages,1).'</pre>');
 
 		// if there are not exactly two languages enabled, ignore
-		if (count($languages) != 2) { return; }
+		if (count($languages[1]) != 2) { return; }
 		
 		$path = drupal_is_front_page() ? '<front>' : $_GET['q'];
 		$links = language_negotiation_get_switch_links('language', $path);
@@ -101,17 +296,23 @@ function site_custom_translated_menu_link_alter(&$item, $map) {
 		$codes = array_keys($languages_copy);
 		$pick = $codes[0];
 
-		$item['href'] = $links->links[$pick]['href']; 
+		// modify link and title
+		$item['href'] = $links->links[$pick]['href'];
+		$title = $languages[1][$pick]->native;
+		$item['title'] = $title;
+		$item['localized_options']['attributes']['title'] = $title;
     
 		// add on rest of GETs to path
 		$gets = $_GET;
 		unset($gets['q']);  // remove q
 		if (count($gets)) $item['localized_options']['query'] = $gets;
     
+		// add other localized options
 		$item['localized_options']['langcode'] = $pick;  
 		$item['localized_options']['attributes']['class'][] = 'language-link';     
 		$item['localized_options']['attributes']['lang'] = $pick; 
-		$item['localized_options']['attributes']['xml:lang'] = $pick; 
+		$item['localized_options']['attributes']['xml:lang'] = $pick;
+		if (!isset($item['localized_options']['language'])) { $item['localized_options']['language'] = new stdClass(); }
 		$item['localized_options']['language']->prefix = $languages[1][$pick]->prefix;    
 		$item['localized_options']['language']->language = $pick;
 	}
