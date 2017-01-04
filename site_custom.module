@@ -46,10 +46,65 @@ function _site_custom_config($form, &$form_state){
 		'#type' => 'textfield',
 		'#title' => t('Text for language switcher menu item'),
 		'#default_value' => variable_get('site_custom_language_switcher_text', ''),
-		'#description' => '<strong>Warning:</strong> <em>Any</em> menu item whose text matches this text will be turned into a language switcher, if and only if exactly two languages are enabled on the site',
+		'#description' => '<strong>Warning:</strong> <em>Any</em> menu item whose text matches this text will be turned into a language switcher, and it will work only if <em>exactly two languages</em> are enabled on the site',
 	);
 	
+	if (module_exists('hybridauth')) {
+		$form['site_custom_hybridauth_text'] = array(
+			'#type' => 'textfield',
+			'#title' => t('Text to replace "HybridAuth" on user pages'),
+			'#default_value' => variable_get('site_custom_hybridauth_text', t('Social Identities')),
+			'#description' => 'Leave blank to use HybridAuth module defaults',
+		);
+	}
+	
 	return system_settings_form($form);
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter
+ *
+ * Use this to alter the "local tasks" which display in ul.primary
+ */
+function site_custom_menu_local_tasks_alter(&$data, $router_item, $root_path){
+	
+	// $data['tabs'][0] holds the primary tabs - ['output'] contains an array of render arrays
+	if (isset($data['tabs'][0]['output']) && is_array($data['tabs'][0]['output'])) {
+
+		// iterate through all the primary tabs
+		foreach ($data['tabs'][0]['output'] as $index => $tab) {
+			
+			// only check tabs that actually have links and paths
+			if (isset($tab['#link']) && is_array($tab['#link']) && isset($tab['#link']['path'])) {
+
+				switch($tab['#link']['path']) {
+
+					// rename hybridauth tab
+					case 'user/%/hybridauth':
+						$hybridauth_text = variable_get('site_custom_hybridauth_text','');
+						if ($hybridauth_text) {
+							$data['tabs'][0]['output'][$index]['#link']['title'] = $hybridauth_text;
+						}
+					break;
+
+				}
+
+			}
+		}
+
+	}
+}
+
+/**
+ * Implements hook_user_view_alter
+ *
+ * modifies user view, which is passed to the function as a render array called $build
+ */
+function site_custom_user_view_alter(&$build) {
+	$hybridauth_text = variable_get('site_custom_hybridauth_text','');
+	if (isset($build['hybridauth_identities']) && $hybridauth_text) {
+		$build['hybridauth_identities']['#title'] = $hybridauth_text;
+	}
 }
 
 /**

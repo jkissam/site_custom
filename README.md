@@ -2,6 +2,8 @@
 
 Starter kit for site-specific custom modules, including a few small, commonly useful bits of code
 
+Current version: 7.x-1.1
+
 ## To use
 
 1. Rename site_custom.info and site_custom.module files to XXX_custom.info, where XXX is a machine-safe version of your site name (all lowercase alphanumeric characters and underscores)
@@ -13,3 +15,4 @@ Starter kit for site-specific custom modules, including a few small, commonly us
 
 1. option to display /styles page which displays common HTML elements and Drupal form elements on a single page, to aid in theme development
 2. an option to make an arbitrary link in a menu turn into a language-switcher for bilingual sites, per [this tutorial](http://www.liquidcms.ca/post/how-language-switcher-menu-item) __Note:__ this only works on menus that are rendered through the regular Drupal theming engine, and will not work with the main menu on the [webskillet base theme](https://github.com/webskillet/webskillet), which uses menu_tree to render the menu, or modules like [OM Maximenu](https://www.drupal.org/project/om_maximenu).
+3. if [hybridauth](https://www.drupal.org/project/hybridauth) module is installed, includes an option to rename the confusingly-named "HybridAuth" section of the user view and local task

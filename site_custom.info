@@ -1,6 +1,6 @@
 name = site_name Custom Module
 description = Custom Module for site_name
 core = 7.x
-version = 7.x-1.0
+version = 7.x-1.1
 configure = admin/config/system/site-information/customizations
 files[] = site_custom.module
